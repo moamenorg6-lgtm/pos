@@ -2,6 +2,8 @@ package com.company.restaurantpos.data.local.daos
 
 import androidx.room.*
 import com.company.restaurantpos.data.local.entities.User
+import com.company.restaurantpos.data.local.entities.UserRole
+import kotlinx.coroutines.flow.Flow
 
 /**
  * Data Access Object for User entity
@@ -11,17 +13,23 @@ import com.company.restaurantpos.data.local.entities.User
 interface UserDao {
     
     /**
-     * Get all users
+     * Get all active users
      */
-    @Query("SELECT * FROM users ORDER BY username ASC")
+    @Query("SELECT * FROM users WHERE isActive = 1 ORDER BY username ASC")
     suspend fun getAllUsers(): List<User>
+    
+    /**
+     * Get all users as Flow for reactive updates
+     */
+    @Query("SELECT * FROM users WHERE isActive = 1 ORDER BY username ASC")
+    fun getAllUsersFlow(): Flow<List<User>>
     
     /**
      * Get user by ID
      * @param userId User ID
      * @return User if found, null otherwise
      */
-    @Query("SELECT * FROM users WHERE id = :userId")
+    @Query("SELECT * FROM users WHERE id = :userId AND isActive = 1")
     suspend fun getById(userId: Int): User?
     
     /**
@@ -29,33 +37,41 @@ interface UserDao {
      * @param username Username
      * @return User if found, null otherwise
      */
-    @Query("SELECT * FROM users WHERE username = :username")
+    @Query("SELECT * FROM users WHERE username = :username AND isActive = 1")
     suspend fun getByUsername(username: String): User?
     
     /**
      * Get users by role
-     * @param role User role (admin, cashier, kitchen)
+     * @param role User role
      * @return List of users with the specified role
      */
-    @Query("SELECT * FROM users WHERE role = :role ORDER BY username ASC")
-    suspend fun getByRole(role: String): List<User>
+    @Query("SELECT * FROM users WHERE role = :role AND isActive = 1 ORDER BY username ASC")
+    suspend fun getByRole(role: UserRole): List<User>
     
     /**
      * Check if username exists
      * @param username Username to check
      * @return True if username exists, false otherwise
      */
-    @Query("SELECT COUNT(*) > 0 FROM users WHERE username = :username")
+    @Query("SELECT COUNT(*) > 0 FROM users WHERE username = :username AND isActive = 1")
     suspend fun usernameExists(username: String): Boolean
     
     /**
-     * Validate user credentials
+     * Validate user credentials for login
      * @param username Username
      * @param passwordHash Hashed password
-     * @return User if credentials are valid, null otherwise
+     * @return User if credentials are valid and user is active, null otherwise
      */
-    @Query("SELECT * FROM users WHERE username = :username AND passwordHash = :passwordHash")
+    @Query("SELECT * FROM users WHERE username = :username AND passwordHash = :passwordHash AND isActive = 1")
     suspend fun validateCredentials(username: String, passwordHash: String): User?
+    
+    /**
+     * Update user's last login timestamp
+     * @param userId User ID
+     * @param timestamp Login timestamp
+     */
+    @Query("UPDATE users SET lastLoginAt = :timestamp WHERE id = :userId")
+    suspend fun updateLastLogin(userId: Int, timestamp: Long)
     
     /**
      * Update user password
@@ -73,7 +89,31 @@ interface UserDao {
      * @return Number of rows updated
      */
     @Query("UPDATE users SET role = :newRole WHERE id = :userId")
-    suspend fun updateRole(userId: Int, newRole: String): Int
+    suspend fun updateRole(userId: Int, newRole: UserRole): Int
+    
+    /**
+     * Deactivate user (soft delete)
+     * @param userId User ID
+     * @return Number of rows updated
+     */
+    @Query("UPDATE users SET isActive = 0 WHERE id = :userId")
+    suspend fun deactivateUser(userId: Int): Int
+    
+    /**
+     * Activate user
+     * @param userId User ID
+     * @return Number of rows updated
+     */
+    @Query("UPDATE users SET isActive = 1 WHERE id = :userId")
+    suspend fun activateUser(userId: Int): Int
+    
+    /**
+     * Get count of users by role
+     * @param role User role
+     * @return Count of active users with the specified role
+     */
+    @Query("SELECT COUNT(*) FROM users WHERE role = :role AND isActive = 1")
+    suspend fun getCountByRole(role: UserRole): Int
     
     /**
      * Insert a new user
@@ -92,7 +132,7 @@ interface UserDao {
     suspend fun update(user: User): Int
     
     /**
-     * Delete user
+     * Delete user (hard delete - use deactivateUser for soft delete)
      * @param user User to delete
      * @return Number of rows deleted
      */
@@ -100,7 +140,7 @@ interface UserDao {
     suspend fun delete(user: User): Int
     
     /**
-     * Delete user by ID
+     * Delete user by ID (hard delete)
      * @param userId User ID to delete
      * @return Number of rows deleted
      */
