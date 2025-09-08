@@ -45,7 +45,7 @@ fun RestaurantPOSApp() {
         startDestination = Screen.Home.route
     ) {
         composable(Screen.Home.route) {
-            HomeScreen()
+            HomeScreen(navController)
         }
         composable(Screen.POS.route) {
             POSScreen()
