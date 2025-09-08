@@ -66,6 +66,15 @@ interface OrderDao {
     suspend fun getByDateRange(startTime: Long, endTime: Long): List<Order>
     
     /**
+     * Get order count within date range
+     * @param startTime Start timestamp
+     * @param endTime End timestamp
+     * @return Count of orders within the date range
+     */
+    @Query("SELECT COUNT(*) FROM orders WHERE createdAt BETWEEN :startTime AND :endTime")
+    suspend fun getOrderCountByDateRange(startTime: Long, endTime: Long): Int
+    
+    /**
      * Get today's orders
      * @param startOfDay Start of day timestamp
      * @param endOfDay End of day timestamp
@@ -130,6 +139,13 @@ interface OrderDao {
      */
     @Query("DELETE FROM orders WHERE id = :orderId")
     suspend fun deleteById(orderId: Int): Int
+    
+    /**
+     * Delete all orders
+     * @return Number of rows deleted
+     */
+    @Query("DELETE FROM orders")
+    suspend fun deleteAll(): Int
     
     // REPORTING QUERIES
     

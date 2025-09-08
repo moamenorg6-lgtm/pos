@@ -75,12 +75,12 @@ class RecipeManager @Inject constructor(
                         
                         for (recipeIngredient in recipeIngredients) {
                             val requiredQuantity = recipeIngredient.quantity * cartItem.quantity
-                            val success = ingredientDao.reduceStock(
+                            val rowsUpdated = ingredientDao.reduceStock(
                                 recipeIngredient.ingredientId,
                                 requiredQuantity
                             )
                             
-                            if (!success) {
+                            if (rowsUpdated == 0) {
                                 // If any deduction fails, we should rollback
                                 // For now, we'll return false and let the caller handle it
                                 return@withContext false
@@ -98,7 +98,7 @@ class RecipeManager @Inject constructor(
     /**
      * Gets recipe ingredients for a product (for display purposes)
      */
-    suspend fun getRecipeIngredients(productId: Long): List<RecipeIngredientInfo> = withContext(Dispatchers.IO) {
+    suspend fun getRecipeIngredients(productId: Int): List<RecipeIngredientInfo> = withContext(Dispatchers.IO) {
         val recipe = recipeDao.getByProductId(productId) ?: return@withContext emptyList()
         val recipeIngredients = recipeIngredientDao.getByRecipeId(recipe.id)
         

@@ -12,6 +12,13 @@ import com.company.restaurantpos.data.local.entities.Ingredient
 interface RecipeIngredientDao {
     
     /**
+     * Get all recipe ingredients
+     * @return List of all recipe ingredients
+     */
+    @Query("SELECT * FROM recipe_ingredients")
+    suspend fun getAllRecipeIngredients(): List<RecipeIngredient>
+    
+    /**
      * Get all recipe ingredients for a specific recipe
      * @param recipeId Recipe ID
      * @return List of recipe ingredients
@@ -114,6 +121,13 @@ interface RecipeIngredientDao {
      */
     @Query("DELETE FROM recipe_ingredients WHERE ingredientId = :ingredientId")
     suspend fun deleteByIngredientId(ingredientId: Int): Int
+    
+    /**
+     * Delete all recipe ingredients
+     * @return Number of rows deleted
+     */
+    @Query("DELETE FROM recipe_ingredients")
+    suspend fun deleteAll(): Int
 }
 
 /**

@@ -71,4 +71,11 @@ interface RecipeDao {
      */
     @Query("DELETE FROM recipes WHERE productId = :productId")
     suspend fun deleteByProductId(productId: Int): Int
+    
+    /**
+     * Delete all recipes
+     * @return Number of rows deleted
+     */
+    @Query("DELETE FROM recipes")
+    suspend fun deleteAll(): Int
 }

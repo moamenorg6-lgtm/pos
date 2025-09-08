@@ -45,6 +45,12 @@ data class Order(
     
     val status: String, // new, preparing, ready, delivered, paid, cancelled
     
+    val subtotal: Double,
+    
+    val tax: Double = 0.0,
+    
+    val discount: Double = 0.0,
+    
     val total: Double,
     
     val createdAt: Long = System.currentTimeMillis()

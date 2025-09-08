@@ -72,6 +72,10 @@ object AppModule {
     @Provides
     fun provideUserDao(database: AppDatabase): UserDao = database.userDao()
     
+    @Provides
+    @Singleton
+    fun provideContext(@ApplicationContext context: Context): Context = context
+    
     // Business Logic Classes are automatically provided by Hilt @Singleton annotation
     // RecipeManager, CustomerAutoFillManager, and OrderManager are injected automatically
 }

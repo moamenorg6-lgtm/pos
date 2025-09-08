@@ -34,7 +34,7 @@ class MainActivity : ComponentActivity() {
     @Composable
     private fun RestaurantPOSApp() {
         val themeViewModel: ThemeViewModel = hiltViewModel()
-        val themeMode by themeViewModel.themeMode.collectAsState()
+        val themeMode by themeViewModel.themeMode.collectAsState(initial = ThemeMode.SYSTEM)
         
         RestaurantThemeProvider(themeMode = themeMode) {
             LocalizationProvider(localizationManager) { localization ->
