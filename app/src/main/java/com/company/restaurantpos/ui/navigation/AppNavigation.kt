@@ -16,6 +16,7 @@ import com.company.restaurantpos.data.local.entities.UserRole
 import com.company.restaurantpos.ui.components.BottomNavigationBar
 import com.company.restaurantpos.ui.screens.*
 import com.company.restaurantpos.ui.viewmodels.AuthViewModel
+import com.company.restaurantpos.ui.viewmodels.LoginState
 import com.company.restaurantpos.utils.LocalizationManager
 import com.company.restaurantpos.utils.RoleBasedNavigation
 import com.company.restaurantpos.utils.RoleGuard
@@ -32,23 +33,27 @@ fun AppNavigation(
     val navController = rememberNavController()
     val authUiState by authViewModel.uiState.collectAsStateWithLifecycle()
     val currentUser by authViewModel.currentUser.collectAsStateWithLifecycle(initialValue = null)
+    val loginState by authViewModel.loginState.collectAsStateWithLifecycle()
     
     // Handle navigation based on authentication state
-    LaunchedEffect(authUiState.isLoggedIn) {
-        if (!authUiState.isLoggedIn) {
-            navController.navigate(Screen.Login.route) {
-                popUpTo(0) { inclusive = true }
+    LaunchedEffect(authUiState.isLoggedIn, currentUser) {
+        if (authUiState.isLoggedIn && currentUser != null) {
+            // User is logged in, ensure we're in the main app
+            if (navController.currentDestination?.route == Screen.Login.route || 
+                navController.currentDestination?.route == Screen.Splash.route) {
+                navController.navigate(Screen.Home.route) {
+                    popUpTo(0) { inclusive = true }
+                }
+            }
+        } else {
+            // User is not logged in, ensure we're in auth flow
+            if (navController.currentDestination?.route != Screen.Login.route && 
+                navController.currentDestination?.route != Screen.Splash.route) {
+                navController.navigate(Screen.Login.route) {
+                    popUpTo(0) { inclusive = true }
+                }
             }
         }
-    }
-    
-    // Determine start destination
-    val startDestination = if (authUiState.isLoggedIn) {
-        currentUser?.let { user ->
-            RoleBasedNavigation.getDefaultRoute(user.role)
-        } ?: Screen.Home.route
-    } else {
-        Screen.Splash.route
     }
     
     val user = currentUser
@@ -64,7 +69,7 @@ fun AppNavigation(
         // Authentication flow
         AuthenticationNavigation(
             navController = navController,
-            startDestination = startDestination,
+            startDestination = Screen.Splash.route,
             localizationManager = localizationManager,
             onLoginSuccess = {
                 // Navigation will be handled by LaunchedEffect above
@@ -88,7 +93,7 @@ private fun MainAppNavigation(
     val currentRoute = currentBackStackEntry?.destination?.route
     
     // Get available screens for current user
-    val availableScreens = getBottomNavigationScreens(currentUser.role.permissions)
+    val availableScreens = getBottomNavScreens(currentUser.role.permissions)
     
     Scaffold(
         bottomBar = {
@@ -205,9 +210,27 @@ private fun AuthenticationNavigation(
         // Login Screen
         composable(Screen.Login.route) {
             LoginScreen(
-                onLoginSuccess = onLoginSuccess
+                onLoginSuccess = {
+                    // Navigation will be handled by LaunchedEffect in parent
+                }
             )
         }
+    }
+}
+
+/**
+ * Get available screens for bottom navigation based on user permissions
+ */
+private fun getBottomNavScreens(userPermissions: Set<com.company.restaurantpos.data.local.entities.Permission>): List<Screen> {
+    return listOf(
+        Screen.Home,
+        Screen.POS,
+        Screen.Kitchen,
+        Screen.Reports,
+        Screen.Settings
+    ).filter { screen ->
+        screen.requiredPermissions.isEmpty() || 
+        screen.requiredPermissions.any { permission -> userPermissions.contains(permission) }
     }
 }
 

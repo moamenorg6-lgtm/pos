@@ -23,7 +23,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.company.restaurantpos.R
 import com.company.restaurantpos.ui.viewmodels.AuthViewModel
 import com.company.restaurantpos.utils.LocalizationManager
-import com.company.restaurantpos.utils.LocalizationProvider
+
 import kotlinx.coroutines.delay
 
 /**
@@ -96,8 +96,7 @@ fun SplashScreen(
         }
     }
     
-    LocalizationProvider(localizationManager) { localization ->
-        Box(
+    Box(
             modifier = Modifier
                 .fillMaxSize()
                 .background(
@@ -143,7 +142,7 @@ fun SplashScreen(
                 
                 // App Name
                 Text(
-                    text = localization.getString("app_name"),
+                    text = "Restaurant POS",
                     style = MaterialTheme.typography.headlineLarge.copy(
                         fontSize = 28.sp,
                         fontWeight = FontWeight.Bold
@@ -186,7 +185,7 @@ fun SplashScreen(
                 
                 // Loading Text
                 Text(
-                    text = localization.getString("loading"),
+                    text = "Loading...",
                     style = MaterialTheme.typography.bodyMedium,
                     color = Color.White.copy(alpha = 0.7f),
                     modifier = Modifier.alpha(textAlpha)
@@ -215,7 +214,6 @@ fun SplashScreen(
             }
         }
     }
-}
 
 /**
  * Animated logo component
