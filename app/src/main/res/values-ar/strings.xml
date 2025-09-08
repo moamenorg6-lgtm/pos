@@ -24,6 +24,56 @@
     <string name="nav_kitchen">المطبخ</string>
     <string name="nav_admin">الإدارة</string>
     
+    <!-- POS Screen -->
+    <string name="search_products">البحث عن المنتجات بالاسم أو الرمز</string>
+    <string name="cart">السلة</string>
+    <string name="empty_cart">السلة فارغة</string>
+    <string name="add_to_cart">إضافة للسلة</string>
+    <string name="remove_from_cart">إزالة</string>
+    <string name="quantity">الكمية</string>
+    <string name="notes">ملاحظات</string>
+    <string name="subtotal">المجموع الفرعي</string>
+    <string name="tax">الضريبة</string>
+    <string name="discount">الخصم</string>
+    <string name="total">المجموع الكلي</string>
+    <string name="checkout">الدفع</string>
+    
+    <!-- Customer -->
+    <string name="customer_phone">رقم هاتف العميل</string>
+    <string name="customer_name">اسم العميل</string>
+    <string name="customer_address">عنوان العميل</string>
+    <string name="create_customer">إنشاء عميل</string>
+    <string name="customer_found">تم العثور على العميل</string>
+    <string name="customer_not_found">لم يتم العثور على العميل</string>
+    
+    <!-- Order Types -->
+    <string name="dine_in">تناول في المطعم</string>
+    <string name="takeaway">طلب خارجي</string>
+    <string name="delivery">توصيل</string>
+    
+    <!-- Payment -->
+    <string name="payment_method">طريقة الدفع</string>
+    <string name="cash">نقداً</string>
+    <string name="card">بطاقة</string>
+    <string name="confirm_order">تأكيد الطلب</string>
+    <string name="print_receipt">طباعة الفاتورة</string>
+    
+    <!-- Stock Validation -->
+    <string name="insufficient_stock">مخزون غير كافي</string>
+    <string name="insufficient_stock_message">المكونات التالية لا تحتوي على مخزون كافي:</string>
+    <string name="required">مطلوب</string>
+    <string name="available">متوفر</string>
+    
+    <!-- Errors -->
+    <string name="error_empty_cart">السلة فارغة</string>
+    <string name="error_customer_validation">يرجى التحقق من معلومات العميل</string>
+    <string name="error_order_creation">فشل في إنشاء الطلب</string>
+    <string name="error_stock_deduction">فشل في خصم المخزون</string>
+    
+    <!-- Success -->
+    <string name="order_created_successfully">تم إنشاء الطلب بنجاح</string>
+    <string name="customer_created_successfully">تم إنشاء العميل بنجاح</string>
+    
     <!-- Common -->
     <string name="loading">جاري التحميل…</string>
     <string name="error">خطأ</string>
@@ -34,4 +84,7 @@
     <string name="delete">حذف</string>
     <string name="edit">تعديل</string>
     <string name="add">إضافة</string>
+    <string name="search">بحث</string>
+    <string name="clear">مسح</string>
+    <string name="close">إغلاق</string>
 </resources>

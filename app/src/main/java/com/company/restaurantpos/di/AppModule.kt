@@ -71,4 +71,7 @@ object AppModule {
     // User DAO
     @Provides
     fun provideUserDao(database: AppDatabase): UserDao = database.userDao()
+    
+    // Business Logic Classes are automatically provided by Hilt @Singleton annotation
+    // RecipeManager, CustomerAutoFillManager, and OrderManager are injected automatically
 }

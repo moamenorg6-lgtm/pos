@@ -24,6 +24,56 @@
     <string name="nav_kitchen">Kitchen</string>
     <string name="nav_admin">Admin</string>
     
+    <!-- POS Screen -->
+    <string name="search_products">Search products by name or SKU</string>
+    <string name="cart">Cart</string>
+    <string name="empty_cart">Your cart is empty</string>
+    <string name="add_to_cart">Add to Cart</string>
+    <string name="remove_from_cart">Remove</string>
+    <string name="quantity">Quantity</string>
+    <string name="notes">Notes</string>
+    <string name="subtotal">Subtotal</string>
+    <string name="tax">Tax</string>
+    <string name="discount">Discount</string>
+    <string name="total">Total</string>
+    <string name="checkout">Checkout</string>
+    
+    <!-- Customer -->
+    <string name="customer_phone">Customer Phone</string>
+    <string name="customer_name">Customer Name</string>
+    <string name="customer_address">Customer Address</string>
+    <string name="create_customer">Create Customer</string>
+    <string name="customer_found">Customer found</string>
+    <string name="customer_not_found">Customer not found</string>
+    
+    <!-- Order Types -->
+    <string name="dine_in">Dine In</string>
+    <string name="takeaway">Takeaway</string>
+    <string name="delivery">Delivery</string>
+    
+    <!-- Payment -->
+    <string name="payment_method">Payment Method</string>
+    <string name="cash">Cash</string>
+    <string name="card">Card</string>
+    <string name="confirm_order">Confirm Order</string>
+    <string name="print_receipt">Print Receipt</string>
+    
+    <!-- Stock Validation -->
+    <string name="insufficient_stock">Insufficient Stock</string>
+    <string name="insufficient_stock_message">The following ingredients don\'t have enough stock:</string>
+    <string name="required">Required</string>
+    <string name="available">Available</string>
+    
+    <!-- Errors -->
+    <string name="error_empty_cart">Cart is empty</string>
+    <string name="error_customer_validation">Please check customer information</string>
+    <string name="error_order_creation">Failed to create order</string>
+    <string name="error_stock_deduction">Failed to deduct stock</string>
+    
+    <!-- Success -->
+    <string name="order_created_successfully">Order created successfully</string>
+    <string name="customer_created_successfully">Customer created successfully</string>
+    
     <!-- Common -->
     <string name="loading">Loading…</string>
     <string name="error">Error</string>
@@ -34,4 +84,7 @@
     <string name="delete">Delete</string>
     <string name="edit">Edit</string>
     <string name="add">Add</string>
+    <string name="search">Search</string>
+    <string name="clear">Clear</string>
+    <string name="close">Close</string>
 </resources>
