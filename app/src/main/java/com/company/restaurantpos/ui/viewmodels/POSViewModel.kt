@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.company.restaurantpos.business.CustomerAutoFillManager
 import com.company.restaurantpos.business.OrderManager
+import com.company.restaurantpos.business.PrintManager
 import com.company.restaurantpos.business.RecipeManager
 import com.company.restaurantpos.data.local.daos.ProductDao
 import com.company.restaurantpos.data.local.entities.Customer
@@ -26,7 +27,8 @@ class POSViewModel @Inject constructor(
     private val productDao: ProductDao,
     private val customerAutoFillManager: CustomerAutoFillManager,
     private val recipeManager: RecipeManager,
-    private val orderManager: OrderManager
+    private val orderManager: OrderManager,
+    private val printManager: PrintManager
 ) : ViewModel() {
     
     private val _state = MutableStateFlow(POSState())
@@ -211,13 +213,55 @@ class POSViewModel @Inject constructor(
             )
             
             if (orderId != null) {
+                // Print receipts after successful order creation
+                try {
+                    printManager.initializePrinter("STUB") // Initialize with stub for testing
+                    
+                    // Get order details for printing
+                    val order = orderManager.getOrderById(orderId.toInt())
+                    val orderItems = orderManager.getOrderItemsWithProducts(orderId.toInt())
+                    
+                    if (order != null && orderItems.isNotEmpty()) {
+                        // Print customer receipt
+                        val receiptPrinted = printManager.printCustomerReceipt(
+                            order = order,
+                            orderItems = orderItems,
+                            customer = currentState.selectedCustomer,
+                            payments = emptyList() // Payments will be added later when payment is processed
+                        )
+                        
+                        // Print kitchen ticket
+                        val kitchenTicketPrinted = printManager.printKitchenTicket(
+                            order = order,
+                            orderItems = orderItems
+                        )
+                        
+                        if (receiptPrinted && kitchenTicketPrinted) {
+                            _state.value = _state.value.copy(error = "Order created and printed successfully!")
+                        } else {
+                            _state.value = _state.value.copy(error = "Order created but printing failed")
+                        }
+                    } else {
+                        _state.value = _state.value.copy(error = "Order created but could not retrieve details for printing")
+                    }
+                } catch (e: Exception) {
+                    _state.value = _state.value.copy(error = "Order created but printing failed: ${e.message}")
+                }
+                
                 // Clear cart and reset state
-                _state.value = POSState().copy(
-                    error = null
+                _state.value = _state.value.copy(
+                    cartItems = emptyList(),
+                    customerPhone = "",
+                    customerName = "",
+                    customerAddress = "",
+                    selectedCustomer = null,
+                    showCreateCustomer = false,
+                    showCheckoutDialog = false,
+                    discount = 0.0,
+                    isLoading = false
                 )
-                // Show success message briefly
-                _state.value = _state.value.copy(error = "Order created successfully!")
-                delay(2000)
+                
+                delay(3000) // Show message longer for printing feedback
                 clearError()
             } else {
                 _state.value = _state.value.copy(
@@ -234,6 +278,34 @@ class POSViewModel @Inject constructor(
     
     fun clearError() {
         _state.value = _state.value.copy(error = null)
+    }
+    
+    /**
+     * Test print functionality
+     */
+    fun testPrint() {
+        viewModelScope.launch {
+            try {
+                val initialized = printManager.initializePrinter("STUB")
+                if (initialized) {
+                    val testResult = printManager.testPrint()
+                    if (testResult) {
+                        _state.value = _state.value.copy(error = "Test print successful!")
+                    } else {
+                        _state.value = _state.value.copy(error = "Test print failed")
+                    }
+                } else {
+                    _state.value = _state.value.copy(error = "Failed to initialize printer")
+                }
+                
+                delay(2000)
+                clearError()
+            } catch (e: Exception) {
+                _state.value = _state.value.copy(error = "Test print error: ${e.message}")
+                delay(2000)
+                clearError()
+            }
+        }
     }
     
     private fun loadProducts() {

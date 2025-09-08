@@ -130,4 +130,108 @@ interface OrderDao {
      */
     @Query("DELETE FROM orders WHERE id = :orderId")
     suspend fun deleteById(orderId: Int): Int
+    
+    // REPORTING QUERIES
+    
+    /**
+     * Get daily sales summary for a specific date
+     * @param startTime Start of day timestamp
+     * @param endTime End of day timestamp
+     * @return Daily sales summary
+     */
+    @Query("""
+        SELECT 
+            COUNT(*) as totalOrders,
+            COALESCE(SUM(total), 0) as totalRevenue,
+            COALESCE(AVG(total), 0) as averageOrderValue
+        FROM orders 
+        WHERE createdAt BETWEEN :startTime AND :endTime
+        AND status NOT IN ('cancelled')
+    """)
+    suspend fun getDailySalesSummary(startTime: Long, endTime: Long): DailySalesSummary
+    
+    /**
+     * Get orders count by status for a date range
+     * @param startTime Start timestamp
+     * @param endTime End timestamp
+     * @return List of order status counts
+     */
+    @Query("""
+        SELECT status, COUNT(*) as count
+        FROM orders 
+        WHERE createdAt BETWEEN :startTime AND :endTime
+        GROUP BY status
+        ORDER BY count DESC
+    """)
+    suspend fun getOrderStatusCounts(startTime: Long, endTime: Long): List<OrderStatusCount>
+    
+    /**
+     * Get orders count by type for a date range
+     * @param startTime Start timestamp
+     * @param endTime End timestamp
+     * @return List of order type counts
+     */
+    @Query("""
+        SELECT type, COUNT(*) as count, COALESCE(SUM(total), 0) as revenue
+        FROM orders 
+        WHERE createdAt BETWEEN :startTime AND :endTime
+        AND status NOT IN ('cancelled')
+        GROUP BY type
+        ORDER BY revenue DESC
+    """)
+    suspend fun getOrderTypeCounts(startTime: Long, endTime: Long): List<OrderTypeStats>
+    
+    /**
+     * Get hourly sales data for a specific date
+     * @param startTime Start of day timestamp
+     * @param endTime End of day timestamp
+     * @return List of hourly sales
+     */
+    @Query("""
+        SELECT 
+            strftime('%H', datetime(createdAt/1000, 'unixepoch', 'localtime')) as hour,
+            COUNT(*) as orderCount,
+            COALESCE(SUM(total), 0) as revenue
+        FROM orders 
+        WHERE createdAt BETWEEN :startTime AND :endTime
+        AND status NOT IN ('cancelled')
+        GROUP BY hour
+        ORDER BY hour ASC
+    """)
+    suspend fun getHourlySales(startTime: Long, endTime: Long): List<HourlySales>
 }
+
+/**
+ * Data class for daily sales summary
+ */
+data class DailySalesSummary(
+    val totalOrders: Int,
+    val totalRevenue: Double,
+    val averageOrderValue: Double
+)
+
+/**
+ * Data class for order status counts
+ */
+data class OrderStatusCount(
+    val status: String,
+    val count: Int
+)
+
+/**
+ * Data class for order type statistics
+ */
+data class OrderTypeStats(
+    val type: String,
+    val count: Int,
+    val revenue: Double
+)
+
+/**
+ * Data class for hourly sales data
+ */
+data class HourlySales(
+    val hour: String,
+    val orderCount: Int,
+    val revenue: Double
+)

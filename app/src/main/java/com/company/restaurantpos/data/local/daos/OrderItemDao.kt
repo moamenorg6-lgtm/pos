@@ -85,6 +85,33 @@ interface OrderItemDao {
     suspend fun getBestSellingProducts(startTime: Long, endTime: Long, limit: Int): List<ProductSales>
     
     /**
+     * Get top selling products with product details for reports
+     * @param startTime Start timestamp
+     * @param endTime End timestamp
+     * @param limit Number of products to return
+     * @return List of top selling products with details
+     */
+    @Query("""
+        SELECT 
+            p.id as productId,
+            p.nameEn,
+            p.nameAr,
+            p.category,
+            SUM(oi.qty) as totalQty,
+            COALESCE(SUM(oi.qty * oi.price), 0) as totalRevenue,
+            COALESCE(AVG(oi.price), 0) as averagePrice
+        FROM order_items oi
+        INNER JOIN orders o ON oi.orderId = o.id
+        INNER JOIN products p ON oi.productId = p.id
+        WHERE o.createdAt BETWEEN :startTime AND :endTime
+        AND o.status NOT IN ('cancelled')
+        GROUP BY p.id, p.nameEn, p.nameAr, p.category
+        ORDER BY totalQty DESC
+        LIMIT :limit
+    """)
+    suspend fun getTopSellingProductsWithDetails(startTime: Long, endTime: Long, limit: Int): List<TopSellingProduct>
+    
+    /**
      * Calculate total revenue for a date range
      * @param startTime Start timestamp
      * @param endTime End timestamp
@@ -169,4 +196,17 @@ data class OrderItemWithProductDetails(
 data class ProductSales(
     val productId: Int,
     val totalQty: Double
+)
+
+/**
+ * Data class for top selling products with details
+ */
+data class TopSellingProduct(
+    val productId: Int,
+    val nameEn: String,
+    val nameAr: String,
+    val category: String,
+    val totalQty: Double,
+    val totalRevenue: Double,
+    val averagePrice: Double
 )
