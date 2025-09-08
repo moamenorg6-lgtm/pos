@@ -14,7 +14,7 @@ import com.company.restaurantpos.ui.theme.RestaurantThemeProvider
 import com.company.restaurantpos.ui.theme.ThemeMode
 import com.company.restaurantpos.ui.viewmodels.ThemeViewModel
 import com.company.restaurantpos.utils.LocalizationManager
-import com.company.restaurantpos.utils.LocalizationProvider
+
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -37,15 +37,13 @@ class MainActivity : ComponentActivity() {
         val themeMode by themeViewModel.themeMode.collectAsState(initial = ThemeMode.SYSTEM)
         
         RestaurantThemeProvider(themeMode = themeMode) {
-            LocalizationProvider(localizationManager) { localization ->
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    AppNavigation(
-                        localizationManager = localizationManager
-                    )
-                }
+            Surface(
+                modifier = Modifier.fillMaxSize(),
+                color = MaterialTheme.colorScheme.background
+            ) {
+                AppNavigation(
+                    localizationManager = localizationManager
+                )
             }
         }
     }
