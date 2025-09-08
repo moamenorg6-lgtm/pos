@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">نظام نقاط البيع للمطاعم</string>
+    
+    <!-- Home Screen -->
+    <string name="home_screen_title">مرحباً بك في نظام نقاط البيع للمطاعم</string>
+    <string name="home_screen_subtitle">حلولك الكاملة لإدارة المطاعم</string>
+    
+    <!-- POS Screen -->
+    <string name="pos_screen_title">نقطة البيع</string>
+    <string name="pos_screen_subtitle">معالجة الطلبات والمدفوعات</string>
+    
+    <!-- Kitchen Screen -->
+    <string name="kitchen_screen_title">شاشة المطبخ</string>
+    <string name="kitchen_screen_subtitle">إدارة الطلبات والتحضير</string>
+    
+    <!-- Admin Screen -->
+    <string name="admin_screen_title">الإدارة</string>
+    <string name="admin_screen_subtitle">إدارة الإعدادات والتقارير</string>
+    
+    <!-- Navigation -->
+    <string name="nav_home">الرئيسية</string>
+    <string name="nav_pos">نقطة البيع</string>
+    <string name="nav_kitchen">المطبخ</string>
+    <string name="nav_admin">الإدارة</string>
+    
+    <!-- Common -->
+    <string name="loading">جاري التحميل…</string>
+    <string name="error">خطأ</string>
+    <string name="retry">إعادة المحاولة</string>
+    <string name="cancel">إلغاء</string>
+    <string name="ok">موافق</string>
+    <string name="save">حفظ</string>
+    <string name="delete">حذف</string>
+    <string name="edit">تعديل</string>
+    <string name="add">إضافة</string>
+</resources>

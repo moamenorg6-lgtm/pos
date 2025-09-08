@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Restaurant POS</string>
+    
+    <!-- Home Screen -->
+    <string name="home_screen_title">Welcome to Restaurant POS</string>
+    <string name="home_screen_subtitle">Your complete restaurant management solution</string>
+    
+    <!-- POS Screen -->
+    <string name="pos_screen_title">Point of Sale</string>
+    <string name="pos_screen_subtitle">Process orders and payments</string>
+    
+    <!-- Kitchen Screen -->
+    <string name="kitchen_screen_title">Kitchen Display</string>
+    <string name="kitchen_screen_subtitle">Manage orders and preparation</string>
+    
+    <!-- Admin Screen -->
+    <string name="admin_screen_title">Administration</string>
+    <string name="admin_screen_subtitle">Manage settings and reports</string>
+    
+    <!-- Navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_pos">POS</string>
+    <string name="nav_kitchen">Kitchen</string>
+    <string name="nav_admin">Admin</string>
+    
+    <!-- Common -->
+    <string name="loading">Loading…</string>
+    <string name="error">Error</string>
+    <string name="retry">Retry</string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
+    <string name="save">Save</string>
+    <string name="delete">Delete</string>
+    <string name="edit">Edit</string>
+    <string name="add">Add</string>
+</resources>
