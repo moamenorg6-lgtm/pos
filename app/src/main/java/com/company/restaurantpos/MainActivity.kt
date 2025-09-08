@@ -6,59 +6,47 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import com.company.restaurantpos.ui.navigation.Screen
-import com.company.restaurantpos.ui.screens.AdminScreen
-import com.company.restaurantpos.ui.screens.HomeScreen
-import com.company.restaurantpos.ui.screens.KitchenScreen
-import com.company.restaurantpos.ui.screens.POSScreen
-import com.company.restaurantpos.ui.screens.ReportsScreen
-import com.company.restaurantpos.ui.theme.RestaurantPOSTheme
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.company.restaurantpos.ui.navigation.AppNavigation
+import com.company.restaurantpos.ui.theme.RestaurantThemeProvider
+import com.company.restaurantpos.ui.theme.ThemeMode
+import com.company.restaurantpos.ui.viewmodels.ThemeViewModel
+import com.company.restaurantpos.utils.LocalizationManager
+import com.company.restaurantpos.utils.LocalizationProvider
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    
+    @Inject
+    lateinit var localizationManager: LocalizationManager
+    
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            RestaurantPOSTheme {
+            RestaurantPOSApp()
+        }
+    }
+    
+    @Composable
+    private fun RestaurantPOSApp() {
+        val themeViewModel: ThemeViewModel = hiltViewModel()
+        val themeMode by themeViewModel.themeMode.collectAsState()
+        
+        RestaurantThemeProvider(themeMode = themeMode) {
+            LocalizationProvider(localizationManager) { localization ->
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    RestaurantPOSApp()
+                    AppNavigation(
+                        localizationManager = localizationManager
+                    )
                 }
             }
-        }
-    }
-}
-
-@Composable
-fun RestaurantPOSApp() {
-    val navController = rememberNavController()
-
-    NavHost(
-        navController = navController,
-        startDestination = Screen.Home.route
-    ) {
-        composable(Screen.Home.route) {
-            HomeScreen(navController)
-        }
-        composable(Screen.POS.route) {
-            POSScreen()
-        }
-        composable(Screen.Kitchen.route) {
-            KitchenScreen()
-        }
-        composable(Screen.Admin.route) {
-            AdminScreen()
-        }
-        composable(Screen.Reports.route) {
-            ReportsScreen()
         }
     }
 }
