@@ -105,4 +105,11 @@ interface IngredientDao {
      */
     @Query("DELETE FROM ingredients WHERE id = :ingredientId")
     suspend fun deleteById(ingredientId: Int): Int
+    
+    /**
+     * Delete all ingredients
+     * @return Number of rows deleted
+     */
+    @Query("DELETE FROM ingredients")
+    suspend fun deleteAll(): Int
 }

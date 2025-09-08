@@ -149,6 +149,13 @@ interface PaymentDao {
      */
     @Query("DELETE FROM payments WHERE orderId = :orderId")
     suspend fun deleteByOrderId(orderId: Int): Int
+    
+    /**
+     * Delete all payments
+     * @return Number of rows deleted
+     */
+    @Query("DELETE FROM payments")
+    suspend fun deleteAll(): Int
 }
 
 /**

@@ -119,4 +119,26 @@ interface ProductDao {
      */
     @Query("DELETE FROM products WHERE id = :productId")
     suspend fun deleteById(productId: Int): Int
+    
+    /**
+     * Delete all products
+     * @return Number of rows deleted
+     */
+    @Query("DELETE FROM products")
+    suspend fun deleteAll(): Int
+    
+    /**
+     * Get all active products
+     * @return List of active products
+     */
+    @Query("SELECT * FROM products WHERE isActive = 1 ORDER BY nameEn ASC")
+    suspend fun getAllActive(): List<Product>
+    
+    /**
+     * Search products by multilingual name
+     * @param query Search query
+     * @return List of matching products
+     */
+    @Query("SELECT * FROM products WHERE nameEn LIKE '%' || :query || '%' OR nameAr LIKE '%' || :query || '%' ORDER BY nameEn ASC")
+    suspend fun searchMultilingual(query: String): List<Product>
 }

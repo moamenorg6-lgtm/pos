@@ -1,6 +1,14 @@
 package com.company.restaurantpos.utils
 
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.company.restaurantpos.data.local.entities.Permission
@@ -19,11 +27,13 @@ fun RoleGuard(
 ) {
     val currentUser by authViewModel.currentUser.collectAsStateWithLifecycle(initialValue = null)
     
-    if (currentUser != null && currentUser.role.permissions.contains(requiredPermission)) {
-        content()
-    } else {
-        onUnauthorized()
-    }
+    currentUser?.let { user ->
+        if (user.role.permissions.contains(requiredPermission)) {
+            content()
+        } else {
+            onUnauthorized()
+        }
+    } ?: onUnauthorized()
 }
 
 /**
@@ -88,11 +98,13 @@ fun RoleGuardRole(
 ) {
     val currentUser by authViewModel.currentUser.collectAsStateWithLifecycle(initialValue = null)
     
-    if (currentUser != null && requiredRoles.contains(currentUser.role)) {
-        content()
-    } else {
-        onUnauthorized()
-    }
+    currentUser?.let { user ->
+        if (requiredRoles.contains(user.role)) {
+            content()
+        } else {
+            onUnauthorized()
+        }
+    } ?: onUnauthorized()
 }
 
 /**
@@ -121,32 +133,32 @@ suspend fun hasAllPermissions(permissions: Set<Permission>, authViewModel: AuthV
  */
 @Composable
 private fun UnauthorizedAccess() {
-    androidx.compose.foundation.layout.Box(
-        modifier = androidx.compose.ui.Modifier.fillMaxSize(),
-        contentAlignment = androidx.compose.ui.Alignment.Center
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
     ) {
-        androidx.compose.foundation.layout.Column(
-            horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally,
-            verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(16.dp)
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            androidx.compose.material3.Icon(
-                imageVector = androidx.compose.material.icons.Icons.Default.Lock,
+            Icon(
+                imageVector = Icons.Default.Lock,
                 contentDescription = "Access Denied",
-                modifier = androidx.compose.ui.Modifier.size(64.dp),
-                tint = androidx.compose.material3.MaterialTheme.colorScheme.error
+                modifier = Modifier.size(64.dp),
+                tint = MaterialTheme.colorScheme.error
             )
             
-            androidx.compose.material3.Text(
+            Text(
                 text = "Access Denied",
-                style = androidx.compose.material3.MaterialTheme.typography.headlineSmall,
-                color = androidx.compose.material3.MaterialTheme.colorScheme.error
+                style = MaterialTheme.typography.headlineSmall,
+                color = MaterialTheme.colorScheme.error
             )
             
-            androidx.compose.material3.Text(
+            Text(
                 text = "You don't have permission to access this feature",
-                style = androidx.compose.material3.MaterialTheme.typography.bodyMedium,
-                color = androidx.compose.material3.MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center
             )
         }
     }
@@ -165,45 +177,4 @@ object RoutePermissions {
     val KITCHEN_TICKETS = setOf(Permission.VIEW_KITCHEN_TICKETS)
     val PRINT_RECEIPTS = setOf(Permission.PRINT_RECEIPTS)
     val PRINT_KITCHEN_TICKETS = setOf(Permission.PRINT_KITCHEN_TICKETS)
-}
-
-/**
- * Role-based navigation helper
- */
-object RoleBasedNavigation {
-    
-    /**
-     * Get available routes for current user role
-     */
-    fun getAvailableRoutes(userRole: UserRole): List<String> {
-        return when (userRole) {
-            UserRole.ADMIN -> listOf(
-                "pos", "reports", "inventory", "settings", "users", "backup"
-            )
-            UserRole.CASHIER -> listOf(
-                "pos"
-            )
-            UserRole.KITCHEN -> listOf(
-                "kitchen"
-            )
-        }
-    }
-    
-    /**
-     * Check if route is accessible for user role
-     */
-    fun isRouteAccessible(route: String, userRole: UserRole): Boolean {
-        return getAvailableRoutes(userRole).contains(route)
-    }
-    
-    /**
-     * Get default route for user role
-     */
-    fun getDefaultRoute(userRole: UserRole): String {
-        return when (userRole) {
-            UserRole.ADMIN -> "pos"
-            UserRole.CASHIER -> "pos"
-            UserRole.KITCHEN -> "kitchen"
-        }
-    }
 }

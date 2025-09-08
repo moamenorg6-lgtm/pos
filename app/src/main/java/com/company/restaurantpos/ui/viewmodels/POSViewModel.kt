@@ -94,13 +94,13 @@ class POSViewModel @Inject constructor(
         _state.value = _state.value.copy(cartItems = currentCart)
     }
     
-    fun removeFromCart(productId: Long) {
+    fun removeFromCart(productId: Int) {
         val currentCart = _state.value.cartItems.toMutableList()
         currentCart.removeAll { it.product.id == productId }
         _state.value = _state.value.copy(cartItems = currentCart)
     }
     
-    fun updateCartItemQuantity(productId: Long, quantity: Double) {
+    fun updateCartItemQuantity(productId: Int, quantity: Double) {
         if (quantity <= 0) {
             removeFromCart(productId)
             return
@@ -115,7 +115,7 @@ class POSViewModel @Inject constructor(
         }
     }
     
-    fun updateCartItemNotes(productId: Long, notes: String) {
+    fun updateCartItemNotes(productId: Int, notes: String) {
         val currentCart = _state.value.cartItems.toMutableList()
         val itemIndex = currentCart.indexOfFirst { it.product.id == productId }
         
@@ -218,22 +218,22 @@ class POSViewModel @Inject constructor(
                     printManager.initializePrinter("STUB") // Initialize with stub for testing
                     
                     // Get order details for printing
-                    val order = orderManager.getOrderById(orderId.toInt())
-                    val orderItems = orderManager.getOrderItemsWithProducts(orderId.toInt())
+                    val orderDetails = orderManager.getOrderById(orderId)
+                    val orderItemsWithProducts = orderManager.getOrderItemsWithProducts(orderId)
                     
-                    if (order != null && orderItems.isNotEmpty()) {
+                    if (orderDetails != null && orderItemsWithProducts.isNotEmpty()) {
                         // Print customer receipt
                         val receiptPrinted = printManager.printCustomerReceipt(
-                            order = order,
-                            orderItems = orderItems,
+                            order = orderDetails.order,
+                            orderItems = orderItemsWithProducts,
                             customer = currentState.selectedCustomer,
-                            payments = emptyList() // Payments will be added later when payment is processed
+                            payments = orderDetails.payments
                         )
                         
                         // Print kitchen ticket
                         val kitchenTicketPrinted = printManager.printKitchenTicket(
-                            order = order,
-                            orderItems = orderItems
+                            order = orderDetails.order,
+                            orderItems = orderItemsWithProducts
                         )
                         
                         if (receiptPrinted && kitchenTicketPrinted) {

@@ -107,13 +107,11 @@ class BackupManager @Inject constructor(
             }
             
             // Perform restore in transaction
-            database.runInTransaction {
-                if (replaceExisting) {
-                    clearAllData()
-                }
-                
-                restoreData(backup)
+            if (replaceExisting) {
+                clearAllData()
             }
+            
+            restoreData(backup)
             
             RestoreResult.Success(backup.timestamp)
         } catch (e: Exception) {

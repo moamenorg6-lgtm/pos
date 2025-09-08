@@ -3,9 +3,11 @@ package com.company.restaurantpos.business
 import com.company.restaurantpos.data.local.daos.OrderDao
 import com.company.restaurantpos.data.local.daos.OrderItemDao
 import com.company.restaurantpos.data.local.daos.PaymentDao
+import com.company.restaurantpos.data.local.daos.ProductDao
 import com.company.restaurantpos.data.local.entities.Order
 import com.company.restaurantpos.data.local.entities.OrderItem
 import com.company.restaurantpos.data.local.entities.Payment
+import com.company.restaurantpos.data.local.entities.Product
 import com.company.restaurantpos.ui.models.CartItem
 import com.company.restaurantpos.ui.models.OrderType
 import com.company.restaurantpos.ui.models.PaymentMethod
@@ -24,6 +26,7 @@ class OrderManager @Inject constructor(
     private val orderDao: OrderDao,
     private val orderItemDao: OrderItemDao,
     private val paymentDao: PaymentDao,
+    private val productDao: ProductDao,
     private val recipeManager: RecipeManager
 ) {
     
@@ -33,14 +36,14 @@ class OrderManager @Inject constructor(
      */
     suspend fun createOrder(
         cartItems: List<CartItem>,
-        customerId: Long?,
+        customerId: Int?,
         orderType: OrderType,
         paymentMethod: PaymentMethod,
         subtotal: Double,
         taxAmount: Double,
         discount: Double,
         total: Double
-    ): Long? = withContext(Dispatchers.IO) {
+    ): Int? = withContext(Dispatchers.IO) {
         try {
             // Validate stock first
             val stockValidation = recipeManager.validateStock(cartItems)
@@ -64,7 +67,7 @@ class OrderManager @Inject constructor(
                 createdAt = System.currentTimeMillis()
             )
             
-            val orderId = orderDao.insert(order)
+            val orderId = orderDao.insert(order).toInt()
             
             // Create order items
             for (cartItem in cartItems) {
@@ -135,7 +138,7 @@ class OrderManager @Inject constructor(
     /**
      * Gets order details by ID
      */
-    suspend fun getOrderById(orderId: Long): OrderDetails? = withContext(Dispatchers.IO) {
+    suspend fun getOrderById(orderId: Int): OrderDetails? = withContext(Dispatchers.IO) {
         try {
             val order = orderDao.getById(orderId) ?: return@withContext null
             val orderItems = orderItemDao.getByOrderId(orderId)
@@ -148,6 +151,23 @@ class OrderManager @Inject constructor(
             )
         } catch (e: Exception) {
             null
+        }
+    }
+    
+    /**
+     * Get order items with their associated products
+     */
+    suspend fun getOrderItemsWithProducts(orderId: Int): List<Pair<OrderItem, Product>> = withContext(Dispatchers.IO) {
+        try {
+            val items = orderItemDao.getByOrderId(orderId)
+            items.mapNotNull { orderItem ->
+                val product = productDao.getById(orderItem.productId)
+                if (product != null) {
+                    Pair(orderItem, product)
+                } else null
+            }
+        } catch (e: Exception) {
+            emptyList()
         }
     }
 }

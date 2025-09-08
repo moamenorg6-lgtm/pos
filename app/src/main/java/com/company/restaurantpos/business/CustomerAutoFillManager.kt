@@ -44,7 +44,7 @@ class CustomerAutoFillManager @Inject constructor(
                 address = address.trim()
             )
             
-            val customerId = customerDao.insert(customer)
+            val customerId = customerDao.insert(customer).toInt()
             customer.copy(id = customerId)
         } catch (e: Exception) {
             null

@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
@@ -50,11 +51,12 @@ fun AppNavigation(
         Screen.Splash.route
     }
     
-    if (authUiState.isLoggedIn && currentUser != null) {
+    val user = currentUser
+    if (authUiState.isLoggedIn && user != null) {
         // Main app with bottom navigation
         MainAppNavigation(
             navController = navController,
-            currentUser = currentUser,
+            currentUser = user,
             localizationManager = localizationManager,
             onLogout = { authViewModel.logout() }
         )
@@ -114,51 +116,60 @@ private fun MainAppNavigation(
         ) {
             // Home Screen
             composable(Screen.Home.route) {
-                RoleGuard(requiredPermission = com.company.restaurantpos.data.local.entities.Permission.VIEW_POS) {
-                    HomeScreen(navController)
-                }
+                RoleGuard(
+                    requiredPermission = com.company.restaurantpos.data.local.entities.Permission.VIEW_POS,
+                    content = {
+                        HomeScreen(navController)
+                    }
+                )
             }
             
             // POS Screen
             composable(Screen.POS.route) {
-                RoleGuard(requiredPermission = com.company.restaurantpos.data.local.entities.Permission.VIEW_POS) {
-                    POSScreen()
-                }
+                RoleGuard(
+                    requiredPermission = com.company.restaurantpos.data.local.entities.Permission.VIEW_POS,
+                    content = { POSScreen() }
+                )
             }
             
             // Kitchen Screen
             composable(Screen.Kitchen.route) {
-                RoleGuard(requiredPermission = com.company.restaurantpos.data.local.entities.Permission.VIEW_KITCHEN_TICKETS) {
-                    KitchenScreen()
-                }
+                RoleGuard(
+                    requiredPermission = com.company.restaurantpos.data.local.entities.Permission.VIEW_KITCHEN_TICKETS,
+                    content = { KitchenScreen() }
+                )
             }
             
             // Reports Screen
             composable(Screen.Reports.route) {
-                RoleGuard(requiredPermission = com.company.restaurantpos.data.local.entities.Permission.VIEW_REPORTS) {
-                    ReportsScreen()
-                }
+                RoleGuard(
+                    requiredPermission = com.company.restaurantpos.data.local.entities.Permission.VIEW_REPORTS,
+                    content = { ReportsScreen() }
+                )
             }
             
             // Inventory Screen (placeholder)
             composable(Screen.Inventory.route) {
-                RoleGuard(requiredPermission = com.company.restaurantpos.data.local.entities.Permission.VIEW_INVENTORY) {
-                    InventoryScreen()
-                }
+                RoleGuard(
+                    requiredPermission = com.company.restaurantpos.data.local.entities.Permission.VIEW_INVENTORY,
+                    content = { InventoryScreen() }
+                )
             }
             
             // Settings Screen
             composable(Screen.Settings.route) {
-                RoleGuard(requiredPermission = com.company.restaurantpos.data.local.entities.Permission.VIEW_SETTINGS) {
-                    SettingsScreen()
-                }
+                RoleGuard(
+                    requiredPermission = com.company.restaurantpos.data.local.entities.Permission.VIEW_SETTINGS,
+                    content = { SettingsScreen() }
+                )
             }
             
             // Admin Screen
             composable(Screen.Admin.route) {
-                RoleGuard(requiredPermission = com.company.restaurantpos.data.local.entities.Permission.MANAGE_USERS) {
-                    AdminScreen()
-                }
+                RoleGuard(
+                    requiredPermission = com.company.restaurantpos.data.local.entities.Permission.MANAGE_USERS,
+                    content = { AdminScreen() }
+                )
             }
         }
     }

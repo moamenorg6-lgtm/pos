@@ -33,6 +33,14 @@ interface CustomerDao {
     suspend fun searchByPhonePartial(phonePartial: String): List<Customer>
     
     /**
+     * Search customers by phone number (alias for searchByPhonePartial)
+     * @param phone Phone number to search for
+     * @return List of customers with matching phone numbers
+     */
+    @Query("SELECT * FROM customers WHERE phone LIKE '%' || :phone || '%' ORDER BY name ASC")
+    suspend fun searchByPhone(phone: String): List<Customer>
+    
+    /**
      * Search customers by name
      * @param nameQuery Name query to search for
      * @return List of customers with matching names
@@ -79,4 +87,11 @@ interface CustomerDao {
      */
     @Query("DELETE FROM customers WHERE id = :customerId")
     suspend fun deleteById(customerId: Int): Int
+    
+    /**
+     * Delete all customers
+     * @return Number of rows deleted
+     */
+    @Query("DELETE FROM customers")
+    suspend fun deleteAll(): Int
 }

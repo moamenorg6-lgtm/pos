@@ -33,6 +33,27 @@ interface OrderItemDao {
     suspend fun getOrderItemsWithProductDetails(orderId: Int): List<OrderItemWithProductDetails>
     
     /**
+     * Get order items with products for a specific order (alias)
+     * @param orderId Order ID
+     * @return List of order items with product information
+     */
+    @Query("""
+        SELECT oi.*, p.nameEn, p.nameAr, p.category
+        FROM order_items oi
+        INNER JOIN products p ON oi.productId = p.id
+        WHERE oi.orderId = :orderId
+        ORDER BY oi.id ASC
+    """)
+    suspend fun getOrderItemsWithProducts(orderId: Int): List<OrderItemWithProductDetails>
+    
+    /**
+     * Get all order items
+     * @return List of all order items
+     */
+    @Query("SELECT * FROM order_items")
+    suspend fun getAllOrderItems(): List<OrderItem>
+    
+    /**
      * Get order item by ID
      * @param orderItemId Order item ID
      * @return Order item if found, null otherwise
@@ -173,6 +194,13 @@ interface OrderItemDao {
      */
     @Query("DELETE FROM order_items WHERE orderId = :orderId")
     suspend fun deleteByOrderId(orderId: Int): Int
+    
+    /**
+     * Delete all order items
+     * @return Number of rows deleted
+     */
+    @Query("DELETE FROM order_items")
+    suspend fun deleteAll(): Int
 }
 
 /**

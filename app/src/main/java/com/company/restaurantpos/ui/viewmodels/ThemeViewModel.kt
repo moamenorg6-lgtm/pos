@@ -12,6 +12,7 @@ import com.company.restaurantpos.ui.theme.ThemeMode
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -58,18 +59,18 @@ class ThemeViewModel @Inject constructor(
      */
     fun toggleTheme() {
         viewModelScope.launch {
-            val currentMode = context.themeDataStore.data.map { preferences ->
+            val currentModeValue = context.themeDataStore.data.map { preferences ->
                 val themeModeString = preferences[THEME_MODE_KEY] ?: ThemeMode.SYSTEM.name
                 try {
                     ThemeMode.valueOf(themeModeString)
                 } catch (e: IllegalArgumentException) {
                     ThemeMode.SYSTEM
                 }
-            }
+            }.firstOrNull() ?: ThemeMode.SYSTEM
             
             // For simplicity, toggle between LIGHT and DARK
             // In a real app, you might want more sophisticated logic
-            val newMode = when (currentMode.first()) {
+            val newMode = when (currentModeValue) {
                 ThemeMode.LIGHT -> ThemeMode.DARK
                 ThemeMode.DARK -> ThemeMode.LIGHT
                 ThemeMode.SYSTEM -> ThemeMode.DARK // Default to dark when toggling from system
