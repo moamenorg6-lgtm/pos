@@ -16,6 +16,7 @@ import com.company.restaurantpos.ui.screens.AdminScreen
 import com.company.restaurantpos.ui.screens.HomeScreen
 import com.company.restaurantpos.ui.screens.KitchenScreen
 import com.company.restaurantpos.ui.screens.POSScreen
+import com.company.restaurantpos.ui.screens.ReportsScreen
 import com.company.restaurantpos.ui.theme.RestaurantPOSTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -55,6 +56,9 @@ fun RestaurantPOSApp() {
         }
         composable(Screen.Admin.route) {
             AdminScreen()
+        }
+        composable(Screen.Reports.route) {
+            ReportsScreen()
         }
     }
 }

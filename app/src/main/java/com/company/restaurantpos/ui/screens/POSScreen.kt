@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Print
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.*
@@ -202,6 +203,22 @@ fun POSScreen(
                         )
                         
                         Spacer(modifier = Modifier.height(16.dp))
+                        
+                        // Test Print button
+                        OutlinedButton(
+                            onClick = viewModel::testPrint,
+                            modifier = Modifier.fillMaxWidth(),
+                            enabled = !state.isLoading
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Print,
+                                contentDescription = null
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text("Test Print")
+                        }
+                        
+                        Spacer(modifier = Modifier.height(8.dp))
                         
                         // Checkout button
                         Button(

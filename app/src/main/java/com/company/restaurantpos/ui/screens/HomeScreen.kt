@@ -3,6 +3,7 @@ package com.company.restaurantpos.ui.screens
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AdminPanelSettings
+import androidx.compose.material.icons.filled.Assessment
 import androidx.compose.material.icons.filled.Kitchen
 import androidx.compose.material.icons.filled.PointOfSale
 import androidx.compose.material3.*
@@ -71,6 +72,19 @@ fun HomeScreen(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(stringResource(R.string.nav_kitchen))
+            }
+            
+            OutlinedButton(
+                onClick = { navController.navigate(Screen.Reports.route) },
+                modifier = Modifier.fillMaxWidth(0.6f)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Assessment,
+                    contentDescription = null,
+                    modifier = Modifier.size(24.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text("Reports")
             }
             
             OutlinedButton(
